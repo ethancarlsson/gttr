@@ -174,8 +174,9 @@ func getStructAndPackageName(
 					}
 				case *ast.Ident:
 					s = x.Name
+					typeFound = typeFound || s == args.Type
 				case *ast.StructType:
-					if typeFound {
+					if typeFound && st == nil {
 						st = x
 						packageName = pkg.Name
 						imports = fileImports
@@ -185,12 +186,10 @@ func getStructAndPackageName(
 					s = string(src[x.Struct-1:])
 				}
 
-				typeFound = typeFound || s == args.Type
-
 				return true
 			})
 
-			if typeFound {
+			if typeFound && st != nil {
 				return strct{
 					s:           st,
 					packageName: packageName,
